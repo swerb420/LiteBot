@@ -55,11 +55,14 @@ class WhaleBehaviorAnalyzer:
     async def _get_wallet_trades(
         self, wallet_address: str, days: int = 30
     ) -> List[Dict]:
-        rows = await db.fetch(
-            "SELECT *, EXTRACT(EPOCH FROM timestamp) as ts FROM wallet_trades WHERE wallet_address=$1 AND timestamp>NOW()-INTERVAL '%s days' ORDER BY timestamp"
-            % days,
-            wallet_address,
-        )
+        query = """
+            SELECT *, EXTRACT(EPOCH FROM timestamp) as ts
+            FROM wallet_trades
+            WHERE wallet_address=$1
+              AND timestamp > NOW() - $2 * INTERVAL '1 day'
+            ORDER BY timestamp
+        """
+        rows = await db.fetch(query, wallet_address, days)
         return [dict(r) for r in rows]
 
     async def _calculate_performance_metrics(self, trades: List[Dict]) -> Dict:

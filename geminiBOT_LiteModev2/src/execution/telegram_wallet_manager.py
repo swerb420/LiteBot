@@ -268,7 +268,10 @@ class WalletManager:
             return
         await update.message.reply_text("Analyzing wallet...")
         analysis = await self.analyzer.deep_analysis(wallet["wallet_address"])
-        message = f"Wallet Analysis: {wallet['label']}\nTotal PnL: ${analysis['performance'].get('total_pnl',0):,.2f}"
+        message = (
+            f"Wallet Analysis: {wallet['label']}\n"
+            f"Total PnL: ${analysis['performance'].get('total_pnl', 0):,.2f}"
+        )
         await update.message.reply_text(message)
 
     async def analyze_wallet_command(
