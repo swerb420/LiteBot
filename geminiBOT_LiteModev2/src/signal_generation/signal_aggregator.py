@@ -6,6 +6,7 @@ from ai_analysis.sentiment_mobilebert import SentimentAnalyzer
 
 logger = get_logger(__name__)
 
+
 class SignalAggregator:
     def __init__(self):
         self.sentiment_analyzer = SentimentAnalyzer()
@@ -19,7 +20,7 @@ class SignalAggregator:
             ]
             combined = []
             for sig in signals:
-                sentiment = self.sentiment_analyzer.analyze(sig['text'])
+                sentiment = await self.sentiment_analyzer.analyze(sig['text'])
                 sig['sentiment'] = sentiment
                 combined.append(sig)
             logger.info(f"[SignalAggregator] Signals: {combined}")
