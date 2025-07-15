@@ -38,3 +38,12 @@ async def test_tracked_wallet_alert(monkeypatch):
     trade_data = {"direction": "long", "size_usd": 15000}
     await watcher._send_tracked_wallet_alert("0xabc", trade_data, "GMX")
     assert tg.messages == ["Tracked Wallet Test long $15,000 on GMX"]
+
+# Remove stub modules so other tests can import the real implementations
+for name in (
+    "execution.telegram_wallet_manager",
+    "ai_analysis.whale_behavior_analyzer",
+    "execution.telegram_bot",
+    "signal_generation.signal_aggregator",
+):
+    sys.modules.pop(name, None)
