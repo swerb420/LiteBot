@@ -3,6 +3,8 @@
 This project provides a minimal whale tracking and trading bot designed for
 low-cost VPS deployments. Key components include a Telegram bot interface,
 lightweight database helpers and a simplified AI module that uses CPU only.
+The TradingSystem starts a single Telegram bot that forwards alerts from the
+whale tracker and other components to your configured chat.
 
 ## Environment Variables
 
