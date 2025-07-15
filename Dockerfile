@@ -10,4 +10,6 @@ COPY . /app
 
 WORKDIR /app/geminiBOT_LiteModev2
 
-ENTRYPOINT ["python3", "-m", "src.main"]
+ENV PYTHONPATH=/app/geminiBOT_LiteModev2/src
+
+ENTRYPOINT ["python3", "src/main.py"]
