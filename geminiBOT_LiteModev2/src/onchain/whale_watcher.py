@@ -28,6 +28,11 @@ class WhaleWatcher:
         self.signal_aggregator = SignalAggregator()
 
     async def run(self):
+        if GMX_VAULT is None:
+            logger.warning(
+                "[WhaleWatcher] GMX_VAULT_ADDRESS unset - disabling GMX monitoring"
+            )
+            return
         await self.db.connect()
         event_filter = self.w3.eth.filter({"address": GMX_VAULT})
         logger.info("[WhaleWatcher] WebSocket listening...")
