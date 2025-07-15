@@ -89,7 +89,7 @@ class WalletManager:
     ):
         try:
             query = """
-                SELECT 
+                SELECT
                     tw.wallet_address,
                     tw.label,
                     tw.category,
@@ -100,7 +100,7 @@ class WalletManager:
                     wp.win_rate,
                     tw.last_activity
                 FROM tracked_wallets tw
-                LEFT JOIN wallet_performance wp ON tw.wallet_address = wp.wallet_address 
+                LEFT JOIN wallet_performance wp ON tw.wallet_address = wp.wallet_address
                     AND wp.period = 'daily'
                 ORDER BY wp.total_pnl DESC NULLS LAST
                 LIMIT 20
