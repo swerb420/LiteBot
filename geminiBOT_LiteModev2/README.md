@@ -21,6 +21,9 @@ whale tracker and other components to your configured chat.
 Use Docker Compose to start all services. The compose file expects the
 `Dockerfile` located at the repository root:
 
+All dependencies are installed from the `requirements.txt` file in the
+repository root during the Docker build.
+
 ```bash
 docker-compose up --build
 ```

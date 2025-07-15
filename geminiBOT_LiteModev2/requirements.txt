@@ -1,9 +1,0 @@
-web3==7.12.1
-hyperliquid==0.4.66
-aioredis==2.0.1
-asyncpg==0.30.0
-ccxt==4.4.94
-python-telegram-bot==22.2
-numpy==2.3.1
-scikit-learn==1.7.0
-transformers==4.53.2
