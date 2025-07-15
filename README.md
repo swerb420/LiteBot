@@ -7,6 +7,11 @@ This repository contains the code for the lightweight trading bot found in `gemi
 - **Docker** and **Docker Compose** installed on the host machine.
 - Basic familiarity with creating environment variable files (`.env`).
 
+All Python packages needed by the bot are listed in the
+`requirements.txt` file at the repository root. The Dockerfile uses this
+file during the build stage, so keep it up to date when adding new
+dependencies.
+
 ## Environment Variables
 
 Create a `.env` file in `geminiBOT_LiteModev2` with the following variables:
