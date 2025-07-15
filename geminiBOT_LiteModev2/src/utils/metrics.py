@@ -8,4 +8,5 @@ class Metrics:
     def get(self, name: str):
         return self.counters.get(name, 0)
 
+
 metrics = Metrics()

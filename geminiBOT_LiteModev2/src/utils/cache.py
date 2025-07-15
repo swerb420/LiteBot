@@ -1,6 +1,7 @@
 import asyncio
 from typing import Any, Dict
 
+
 class InMemoryCache:
     def __init__(self):
         self.store: Dict[str, Any] = {}
@@ -17,10 +18,14 @@ class InMemoryCache:
 
     async def get(self, key: str) -> Any:
         async with self.lock:
-            if key in self.expiry and self.expiry[key] < asyncio.get_event_loop().time():
+            if (
+                key in self.expiry
+                and self.expiry[key] < asyncio.get_event_loop().time()
+            ):
                 self.store.pop(key, None)
                 self.expiry.pop(key, None)
                 return None
             return self.store.get(key)
+
 
 cache = InMemoryCache()

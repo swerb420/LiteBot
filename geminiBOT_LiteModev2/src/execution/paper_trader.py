@@ -5,6 +5,7 @@ from utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class PaperTrader:
     def __init__(self):
         self.open_trades = []

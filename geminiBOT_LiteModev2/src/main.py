@@ -18,6 +18,7 @@ from monitoring.whale_analytics import whale_analytics
 setup_logging()
 logger = get_logger(__name__)
 
+
 class TradingSystem:
     def __init__(self):
         self.components = []
@@ -39,7 +40,7 @@ class TradingSystem:
             SystemMonitor(),
             ApiMonitor(),
             self.trade_executor,
-            EnhancedWhaleWatcher(telegram_bot)
+            EnhancedWhaleWatcher(telegram_bot),
         ]
 
     async def run(self):
@@ -48,7 +49,7 @@ class TradingSystem:
         try:
             async with asyncio.TaskGroup() as tg:
                 for component in self.components:
-                    if hasattr(component, 'run'):
+                    if hasattr(component, "run"):
                         tg.create_task(run_with_retry(component.run))
         except (KeyboardInterrupt, SystemExit):
             logger.info("[System] Shutdown initiated.")
@@ -57,6 +58,7 @@ class TradingSystem:
 
     async def shutdown(self):
         logger.info("[System] Graceful shutdown complete.")
+
 
 if __name__ == "__main__":
     system = TradingSystem()

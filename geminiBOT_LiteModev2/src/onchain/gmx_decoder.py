@@ -7,6 +7,7 @@ logger = get_logger(__name__)
 
 GMX_VAULT_ABI = []  # Add real GMX ABI JSON here later
 
+
 class GMXDecoder:
     def __init__(self):
         self.w3 = Web3()
@@ -19,4 +20,3 @@ class GMXDecoder:
         except Exception as e:
             logger.error(f"[GMXDecoder] decode failed: {e}")
             return None
-

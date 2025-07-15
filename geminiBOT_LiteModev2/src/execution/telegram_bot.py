@@ -9,6 +9,7 @@ from utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class TelegramBot:
     def __init__(self):
         if not TELEGRAM_BOT_TOKEN:
@@ -26,7 +27,9 @@ class TelegramBot:
 
     async def start_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         user = update.effective_user
-        await update.message.reply_html(rf"Hi {user.mention_html()}! Bot online. Use /help.")
+        await update.message.reply_html(
+            rf"Hi {user.mention_html()}! Bot online. Use /help."
+        )
 
     async def status_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("✅ Status: Online | Mode: Paper")
@@ -48,6 +51,8 @@ class TelegramBot:
         if not self.application:
             return
         try:
-            await self.application.bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message, parse_mode='Markdown')
+            await self.application.bot.send_message(
+                chat_id=TELEGRAM_CHAT_ID, text=message, parse_mode="Markdown"
+            )
         except Exception as e:
             logger.error(f"[TelegramBot] send_alert error: {e}")

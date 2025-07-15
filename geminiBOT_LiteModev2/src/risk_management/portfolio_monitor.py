@@ -6,9 +6,10 @@ from utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class PortfolioMonitor:
     def __init__(self):
-        self.kraken = ccxt.kraken({'enableRateLimit': True})
+        self.kraken = ccxt.kraken({"enableRateLimit": True})
 
     async def run(self):
         while True:
@@ -20,7 +21,7 @@ class PortfolioMonitor:
         risk_fraction = 0.02
         try:
             ticker = await self.kraken.fetch_ticker(symbol)
-            price = ticker['last']
+            price = ticker["last"]
         except Exception as e:
             logger.warning(f"[PortfolioMonitor] Price fallback: {e}")
             price = 100

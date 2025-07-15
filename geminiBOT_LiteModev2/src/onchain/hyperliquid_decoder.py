@@ -5,6 +5,7 @@ from utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class HyperliquidDecoder:
     def __init__(self):
         self.api = HyperliquidAPI()
@@ -17,4 +18,3 @@ class HyperliquidDecoder:
         except Exception as e:
             logger.error(f"[HyperliquidDecoder] fetch error: {e}")
             return []
-

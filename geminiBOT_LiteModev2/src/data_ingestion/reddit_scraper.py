@@ -6,6 +6,7 @@ from utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+
 class RedditScraper:
     def __init__(self, redis_url="redis://localhost"):
         self.redis = aioredis.from_url(redis_url)

@@ -16,12 +16,12 @@ class SignalAggregator:
         while True:
             signals = [
                 {"symbol": "AAPL", "text": "Apple beats earnings estimates."},
-                {"symbol": "BTC-USD", "text": "Bitcoin hits new local high."}
+                {"symbol": "BTC-USD", "text": "Bitcoin hits new local high."},
             ]
             combined = []
             for sig in signals:
-                sentiment = await self.sentiment_analyzer.analyze(sig['text'])
-                sig['sentiment'] = sentiment
+                sentiment = await self.sentiment_analyzer.analyze(sig["text"])
+                sig["sentiment"] = sentiment
                 combined.append(sig)
             logger.info(f"[SignalAggregator] Signals: {combined}")
             await asyncio.sleep(60)

@@ -38,3 +38,26 @@ Compose limits the trading bot container to about **1.5&nbsp;GB** of memory, so 
 
 The bot is designed for low-memory environments. Make sure your VPS provides enough RAM for Docker and the database. Running within the memory limit helps keep costs low while still supporting basic whale-watching features.
 
+
+## Linting
+
+This project uses **black** and **flake8** for code formatting and linting.
+Install the tools with:
+
+```bash
+pip install black flake8 pre-commit
+```
+
+Run linting manually using:
+
+```bash
+black geminiBOT_LiteModev2/src
+flake8
+```
+
+To enable automatic checks, install the provided pre-commit hooks:
+
+```bash
+pre-commit install
+```
+

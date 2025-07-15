@@ -30,16 +30,18 @@ class EnhancedWhaleWatcher(WhaleWatcher):
         """
         wallets = await db.fetch(query)
         for w in wallets:
-            self.tracked_wallets.add(w['wallet_address'].lower())
-            self.wallet_alerts[w['wallet_address'].lower()] = {
-                'min_size': w['min_trade_size'],
-                'settings': w.get('metadata', {})
+            self.tracked_wallets.add(w["wallet_address"].lower())
+            self.wallet_alerts[w["wallet_address"].lower()] = {
+                "min_size": w["min_trade_size"],
+                "settings": w.get("metadata", {}),
             }
-        logger.info(f"[EnhancedWhaleWatcher] Loaded {len(self.tracked_wallets)} wallets")
+        logger.info(
+            f"[EnhancedWhaleWatcher] Loaded {len(self.tracked_wallets)} wallets"
+        )
 
     async def _process_log(self, log: Dict, protocol: str):
         try:
-            wallet = Web3.to_checksum_address('0x' + log['topics'][1].hex()[-40:])
+            wallet = Web3.to_checksum_address("0x" + log["topics"][1].hex()[-40:])
             is_tracked = wallet.lower() in self.tracked_wallets
             await super()._process_log(log, protocol)
             if is_tracked:
@@ -53,22 +55,30 @@ class EnhancedWhaleWatcher(WhaleWatcher):
             return self.decode_increase_position(log)
         return {}
 
-    async def _process_tracked_wallet_activity(self, wallet: str, log: Dict, protocol: str):
+    async def _process_tracked_wallet_activity(
+        self, wallet: str, log: Dict, protocol: str
+    ):
         try:
-            await db.execute("UPDATE tracked_wallets SET last_activity=NOW() WHERE wallet_address=$1", wallet)
+            await db.execute(
+                "UPDATE tracked_wallets SET last_activity=NOW() WHERE wallet_address=$1",
+                wallet,
+            )
             trade_data = await self._decode_trade_details(log, protocol)
             alert_settings = self.wallet_alerts.get(wallet.lower(), {})
-            min_size = alert_settings.get('min_size', 10000)
-            if trade_data['size_usd'] >= min_size:
+            min_size = alert_settings.get("min_size", 10000)
+            if trade_data["size_usd"] >= min_size:
                 await self._send_tracked_wallet_alert(wallet, trade_data, protocol)
         except Exception as e:
             logger.error(f"[EnhancedWhaleWatcher] tracked wallet error: {e}")
 
-    async def _send_tracked_wallet_alert(self, wallet: str, trade_data: Dict, protocol: str):
-        wallet_info = await db.fetchrow("SELECT label, category FROM tracked_wallets WHERE wallet_address=$1", wallet)
-        label = wallet_info['label'] if wallet_info else 'Unknown'
-        message = (
-            f"Tracked Wallet {label} {trade_data['direction']} ${trade_data['size_usd']:,.0f} on {protocol}"
+    async def _send_tracked_wallet_alert(
+        self, wallet: str, trade_data: Dict, protocol: str
+    ):
+        wallet_info = await db.fetchrow(
+            "SELECT label, category FROM tracked_wallets WHERE wallet_address=$1",
+            wallet,
         )
+        label = wallet_info["label"] if wallet_info else "Unknown"
+        message = f"Tracked Wallet {label} {trade_data['direction']} ${trade_data['size_usd']:,.0f} on {protocol}"
         await self.tg_bot.send_alert(message)
         await telegram_notifier.send_alert(message)

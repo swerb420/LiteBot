@@ -1,4 +1,3 @@
-
 # === 1️⃣ WhaleWatcher with WebSocket ===
 import asyncio
 import os
@@ -17,8 +16,11 @@ if _vault_addr:
 else:
     GMX_VAULT = None
     logger.warning("[WhaleWatcher] GMX_VAULT_ADDRESS not set")
-SIG_POSITION_OPEN = Web3.keccak(text="IncreasePosition(address,address,address,uint256,uint256,uint256,uint256,uint256,uint256,bool,uint256)").hex()
+SIG_POSITION_OPEN = Web3.keccak(
+    text="IncreasePosition(address,address,address,uint256,uint256,uint256,uint256,uint256,uint256,bool,uint256)"
+).hex()
 SIG_POSITION_CLOSE = Web3.keccak(text="DecreasePosition(...)").hex()
+
 
 class WhaleWatcher:
     def __init__(self, tg_bot: TelegramBot):
@@ -53,7 +55,7 @@ class WhaleWatcher:
 
     async def _process_log(self, log, protocol: str):
         sig = log["topics"][0].hex()
-        wallet = Web3.to_checksum_address('0x' + log["topics"][1].hex()[-40:])
+        wallet = Web3.to_checksum_address("0x" + log["topics"][1].hex()[-40:])
         if sig == SIG_POSITION_OPEN:
             data = self.decode_increase_position(log)
             await self.write_trade(wallet, protocol, "open", data)
@@ -61,7 +63,7 @@ class WhaleWatcher:
                 f"🐋 Whale {wallet} opened {data['size_usd']:.2f}$ {data['direction']}"
             )
             await self.signal_aggregator.process_whale_signal(
-                data['symbol'], data['size_usd'], data['direction']
+                data["symbol"], data["size_usd"], data["direction"]
             )
         elif sig == SIG_POSITION_CLOSE:
             await self.link_pnl(wallet, log)
@@ -76,7 +78,7 @@ class WhaleWatcher:
             "size_usd": size_usd,
             "leverage": leverage,
             "direction": direction,
-            "tx_hash": log["transactionHash"].hex()
+            "tx_hash": log["transactionHash"].hex(),
         }
 
     async def write_trade(self, wallet, protocol, action, data):
@@ -86,8 +88,14 @@ class WhaleWatcher:
                 INSERT INTO wallet_trades(wallet_address, protocol, action, symbol, size_usd, leverage, direction, tx_hash)
                 VALUES($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT DO NOTHING
                 """,
-                wallet, protocol, action,
-                data["symbol"], data["size_usd"], data["leverage"], data["direction"], data["tx_hash"]
+                wallet,
+                protocol,
+                action,
+                data["symbol"],
+                data["size_usd"],
+                data["leverage"],
+                data["direction"],
+                data["tx_hash"],
             )
             logger.info(f"[WhaleWatcher] {protocol} {action} {data}")
         except Exception as e:
@@ -97,4 +105,3 @@ class WhaleWatcher:
         # Example placeholder to link open/close and calculate PnL
         # You’ll decode DecreasePosition details properly here
         logger.info(f"[WhaleWatcher] Linking PnL for {wallet}")
-
