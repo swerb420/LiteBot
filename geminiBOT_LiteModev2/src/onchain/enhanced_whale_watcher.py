@@ -1,6 +1,7 @@
 import asyncio
 from web3 import Web3
 from typing import Dict
+
 from utils.logger import get_logger
 from database.db_manager import db
 from onchain.whale_watcher import WhaleWatcher
@@ -8,14 +9,12 @@ from execution.telegram_bot import TelegramBot
 
 logger = get_logger(__name__)
 
+telegram_notifier = TelegramBot()
+
+
 class EnhancedWhaleWatcher(WhaleWatcher):
     def __init__(self, tg_bot: TelegramBot):
         super().__init__(tg_bot)
-telegram_notifier = TelegramBot()
-
-class EnhancedWhaleWatcher(WhaleWatcher):
-    def __init__(self):
-        super().__init__()
         self.tracked_wallets = set()
         self.wallet_alerts = {}
 

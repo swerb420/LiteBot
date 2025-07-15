@@ -37,18 +37,24 @@ class WhaleWatcher:
 
     async def handle_log(self, log):
         try:
-            sig = log["topics"][0].hex()
-            wallet = Web3.to_checksum_address('0x' + log["topics"][1].hex()[-40:])
-            if sig == SIG_POSITION_OPEN:
-                data = self.decode_increase_position(log)
-                await self.write_trade(wallet, "GMX", "open", data)
-                await self.tg_bot.send_alert(f"🐋 Whale {wallet} opened {data['size_usd']:.2f}$ {data['direction']}")
-                await self.signal_aggregator.process_whale_signal(data['symbol'], data['size_usd'], data['direction'])
-            elif sig == SIG_POSITION_CLOSE:
-                # Implement close decode here, link PnL
-                await self.link_pnl(wallet, log)
+            await self._process_log(log, "GMX")
         except Exception as e:
             logger.error(f"[WhaleWatcher] handle_log error: {e}")
+
+    async def _process_log(self, log, protocol: str):
+        sig = log["topics"][0].hex()
+        wallet = Web3.to_checksum_address('0x' + log["topics"][1].hex()[-40:])
+        if sig == SIG_POSITION_OPEN:
+            data = self.decode_increase_position(log)
+            await self.write_trade(wallet, protocol, "open", data)
+            await self.tg_bot.send_alert(
+                f"🐋 Whale {wallet} opened {data['size_usd']:.2f}$ {data['direction']}"
+            )
+            await self.signal_aggregator.process_whale_signal(
+                data['symbol'], data['size_usd'], data['direction']
+            )
+        elif sig == SIG_POSITION_CLOSE:
+            await self.link_pnl(wallet, log)
 
     def decode_increase_position(self, log):
         data = log["data"]
