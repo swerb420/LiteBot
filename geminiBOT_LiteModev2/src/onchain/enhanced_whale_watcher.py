@@ -11,6 +11,11 @@ logger = get_logger(__name__)
 class EnhancedWhaleWatcher(WhaleWatcher):
     def __init__(self, tg_bot: TelegramBot):
         super().__init__(tg_bot)
+telegram_notifier = TelegramBot()
+
+class EnhancedWhaleWatcher(WhaleWatcher):
+    def __init__(self):
+        super().__init__()
         self.tracked_wallets = set()
         self.wallet_alerts = {}
 
@@ -61,3 +66,4 @@ class EnhancedWhaleWatcher(WhaleWatcher):
             f"Tracked Wallet {label} {trade_data['direction']} ${trade_data['size_usd']:,.0f} on {protocol}"
         )
         await self.tg_bot.send_alert(message)
+        await telegram_notifier.send_alert(message)

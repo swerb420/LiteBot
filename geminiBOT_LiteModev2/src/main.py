@@ -40,6 +40,7 @@ class TradingSystem:
             ApiMonitor(),
             self.trade_executor,
             EnhancedWhaleWatcher(telegram_bot)
+            EnhancedWhaleWatcher()
         ]
 
     async def run(self):
