@@ -1,11 +1,8 @@
-import asyncio
 import numpy as np
 from typing import Dict, List
-from datetime import datetime
 from sklearn.preprocessing import StandardScaler
 from database.db_manager import db
 from utils.logger import get_logger
-from utils.cache import cache
 
 logger = get_logger(__name__)
 

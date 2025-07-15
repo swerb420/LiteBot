@@ -1,5 +1,4 @@
 import re
-from typing import List, Dict
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     CommandHandler,
