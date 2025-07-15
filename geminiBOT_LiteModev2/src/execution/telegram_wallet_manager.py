@@ -311,11 +311,13 @@ class WalletManager:
         if not field or not wallet:
             await update.message.reply_text("Unexpected error")
             return ConversationHandler.END
+        allowed_fields = {"label", "category", "tags", "min_trade_size"}
+        if field not in allowed_fields:
+            await update.message.reply_text("Invalid field")
+            return ConversationHandler.END
         try:
-            await db.execute(
-                f"UPDATE tracked_wallets SET {field}=$1 WHERE wallet_address=$2",
-                value, wallet
-            )
+            query = "UPDATE tracked_wallets SET " + field + "=$1 WHERE wallet_address=$2"
+            await db.execute(query, value, wallet)
             await update.message.reply_text("Updated")
         except Exception as e:
             logger.error(f"[WalletManager] edit error: {e}")
