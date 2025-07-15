@@ -48,6 +48,12 @@ class EnhancedWhaleWatcher(WhaleWatcher):
         except Exception as e:
             logger.error(f"[EnhancedWhaleWatcher] processing error: {e}")
 
+    async def _decode_trade_details(self, log: Dict, protocol: str) -> Dict:
+        """Decode trade details for a given protocol."""
+        if protocol.lower() == "gmx":
+            return self.decode_increase_position(log)
+        return {}
+
     async def _process_tracked_wallet_activity(self, wallet: str, log: Dict, protocol: str):
         try:
             await db.execute("UPDATE tracked_wallets SET last_activity=NOW() WHERE wallet_address=$1", wallet)

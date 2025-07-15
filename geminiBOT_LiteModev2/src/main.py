@@ -39,7 +39,7 @@ class TradingSystem:
             SystemMonitor(),
             ApiMonitor(),
             self.trade_executor,
-            EnhancedWhaleWatcher(telegram_bot)
+            EnhancedWhaleWatcher(telegram_bot),
             EnhancedWhaleWatcher()
         ]
 
