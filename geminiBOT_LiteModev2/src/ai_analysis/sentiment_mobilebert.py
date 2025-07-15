@@ -14,21 +14,27 @@ class SentimentAnalyzer:
 
     def __init__(self):
         self.pipeline = None
+        self._loaded = False
+
+    async def _load(self):
+        if not self._loaded:
+            logger.info("[SentimentAnalyzer] Loading MobileBERT...")
+            self.pipeline = pipeline(
+                "sentiment-analysis",
+                model="textattack/mobilebert-uncased-SST-2",
+                device=-1,
+            )
+            self._loaded = True
+            logger.info("[SentimentAnalyzer] MobileBERT model loaded.")
 
     async def run(self):
-        logger.info("[SentimentAnalyzer] Loading MobileBERT...")
-        self.pipeline = pipeline(
-            "sentiment-analysis",
-            model="textattack/mobilebert-uncased-SST-2",
-            device=-1
-        )
-        logger.info("[SentimentAnalyzer] MobileBERT model loaded.")
+        await self._load()
         while True:
             await asyncio.sleep(3600)
 
-    def analyze(self, text: str) -> dict:
-        if not self.pipeline:
-            return {"label": "NEUTRAL", "score": 0.5}
+    async def analyze(self, text: str) -> dict:
+        if not self._loaded:
+            await self._load()
         try:
             result = self.pipeline(text[:512])[0]
             logger.debug(f"[SentimentAnalyzer] {result}")
