@@ -25,3 +25,21 @@ class DBManager:
         async with self.pool.acquire() as conn:
             rows = await conn.fetch("SELECT symbol FROM tracked_assets WHERE is_active = TRUE;")
             return [row['symbol'] for row in rows]
+
+    async def fetch(self, query: str, *args):
+        await self.connect()
+        async with self.pool.acquire() as conn:
+            return await conn.fetch(query, *args)
+
+    async def fetchrow(self, query: str, *args):
+        await self.connect()
+        async with self.pool.acquire() as conn:
+            return await conn.fetchrow(query, *args)
+
+    async def execute(self, query: str, *args):
+        await self.connect()
+        async with self.pool.acquire() as conn:
+            return await conn.execute(query, *args)
+
+# Global instance
+db = DBManager()

@@ -3,6 +3,7 @@
 import asyncio
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
+from execution.telegram_wallet_manager import WalletManager
 from config.settings import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
 from utils.logger import get_logger
 
@@ -16,6 +17,7 @@ class TelegramBot:
             return
         self.application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
         self._setup_handlers()
+        self.wallet_manager = WalletManager(self)
 
     def _setup_handlers(self):
         self.application.add_handler(CommandHandler("start", self.start_command))
@@ -37,3 +39,11 @@ class TelegramBot:
             return
         logger.info("[TelegramBot] Running...")
         self.application.run_polling()
+
+    async def send_alert(self, message: str):
+        if not self.application:
+            return
+        try:
+            await self.application.bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message, parse_mode='Markdown')
+        except Exception as e:
+            logger.error(f"[TelegramBot] send_alert error: {e}")
