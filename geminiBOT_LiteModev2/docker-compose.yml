@@ -21,7 +21,8 @@ services:
 
   tradingbot:
     build:
-      context: .
+      context: ..
+      dockerfile: Dockerfile
     env_file:
       - .env
     command: python3 -m src.main
@@ -33,7 +34,7 @@ services:
         limits:
           memory: 1.5G
     volumes:
-      - ./:/app
+      - ..:/app
 
 volumes:
   pg_data:
