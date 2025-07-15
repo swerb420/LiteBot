@@ -38,7 +38,11 @@ class TelegramBot:
         if not self.application:
             return
         logger.info("[TelegramBot] Running...")
-        self.application.run_polling()
+        await self.application.initialize()
+        await self.application.start()
+        await self.application.updater.start_polling()
+        while True:
+            await asyncio.sleep(3600)
 
     async def send_alert(self, message: str):
         if not self.application:
