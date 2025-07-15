@@ -43,3 +43,16 @@ Compose limits the trading bot container to about **1.5&nbsp;GB** of memory, so 
 
 The bot is designed for low-memory environments. Make sure your VPS provides enough RAM for Docker and the database. Running within the memory limit helps keep costs low while still supporting basic whale-watching features.
 
+
+## Development
+
+The test suite uses `pytest` together with `pytest-asyncio`. Install the
+requirements and run the tests like so:
+
+```bash
+pip install -r requirements.txt
+pytest -q
+```
+
+These packages are only needed for development and are not required in
+production.
