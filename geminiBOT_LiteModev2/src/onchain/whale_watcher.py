@@ -10,8 +10,13 @@ from signal_generation.signal_aggregator import SignalAggregator
 
 logger = get_logger(__name__)
 
-ALCHEMY_WS_URL = os.getenv("ALCHEMY_WS_URL")
-GMX_VAULT = Web3.to_checksum_address(os.getenv("GMX_VAULT_ADDRESS"))
+ALCHEMY_WS_URL = os.getenv("ALCHEMY_WS_URL", "")
+_vault_addr = os.getenv("GMX_VAULT_ADDRESS")
+if _vault_addr:
+    GMX_VAULT = Web3.to_checksum_address(_vault_addr)
+else:
+    GMX_VAULT = None
+    logger.warning("[WhaleWatcher] GMX_VAULT_ADDRESS not set")
 SIG_POSITION_OPEN = Web3.keccak(text="IncreasePosition(address,address,address,uint256,uint256,uint256,uint256,uint256,uint256,bool,uint256)").hex()
 SIG_POSITION_CLOSE = Web3.keccak(text="DecreasePosition(...)").hex()
 
