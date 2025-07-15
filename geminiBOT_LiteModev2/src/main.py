@@ -29,15 +29,17 @@ class TradingSystem:
         await self.db_manager.disconnect()
 
         self.trade_executor = PaperTrader()
+        telegram_bot = TelegramBot()
 
         self.components = [
-            TelegramBot(),
+            telegram_bot,
             EnsembleManager(),
             SignalAggregator(),
             PortfolioMonitor(),
             SystemMonitor(),
             ApiMonitor(),
             self.trade_executor,
+            EnhancedWhaleWatcher(telegram_bot)
             EnhancedWhaleWatcher()
         ]
 

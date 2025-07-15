@@ -1,7 +1,7 @@
 # src/database/db_manager.py
 
 import asyncpg
-from config.settings import DATABASE_URL
+from config.settings import DATABASE_URL, DB_POOL_MIN_SIZE, DB_POOL_MAX_SIZE
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -12,7 +12,11 @@ class DBManager:
 
     async def connect(self):
         if not self.pool:
-            self.pool = await asyncpg.create_pool(dsn=DATABASE_URL)
+            self.pool = await asyncpg.create_pool(
+                dsn=DATABASE_URL,
+                min_size=DB_POOL_MIN_SIZE,
+                max_size=DB_POOL_MAX_SIZE,
+            )
             logger.info("[DBManager] Pool connected.")
 
     async def disconnect(self):

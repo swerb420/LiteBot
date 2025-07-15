@@ -16,10 +16,10 @@ SIG_POSITION_OPEN = Web3.keccak(text="IncreasePosition(address,address,address,u
 SIG_POSITION_CLOSE = Web3.keccak(text="DecreasePosition(...)").hex()
 
 class WhaleWatcher:
-    def __init__(self):
+    def __init__(self, tg_bot: TelegramBot):
         self.w3 = Web3(Web3.WebsocketProvider(ALCHEMY_WS_URL))
         self.db = DBManager()
-        self.tg_bot = TelegramBot()
+        self.tg_bot = tg_bot
         self.signal_aggregator = SignalAggregator()
 
     async def run(self):
