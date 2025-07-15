@@ -24,3 +24,20 @@ class SignalAggregator:
                 combined.append(sig)
             logger.info(f"[SignalAggregator] Signals: {combined}")
             await asyncio.sleep(60)
+
+    async def process_whale_signal(self, symbol: str, size_usd: float, direction: str):
+        """Process large whale trade events.
+
+        This placeholder simply logs the received trade details so that
+        :class:`~onchain.whale_watcher.WhaleWatcher` can pass data here
+        without raising errors. More complex aggregation logic can be
+        implemented later.
+        """
+        try:
+            logger.info(
+                f"[SignalAggregator] Whale trade {symbol} {direction} "
+                f"${size_usd:,.2f}"
+            )
+            # TODO: aggregate whale activity with other market signals
+        except Exception as e:
+            logger.error(f"[SignalAggregator] process_whale_signal error: {e}")
