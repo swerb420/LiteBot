@@ -9,8 +9,6 @@ from execution.telegram_bot import TelegramBot
 
 logger = get_logger(__name__)
 
-telegram_notifier = TelegramBot()
-
 
 class EnhancedWhaleWatcher(WhaleWatcher):
     def __init__(self, tg_bot: TelegramBot):
@@ -71,4 +69,3 @@ class EnhancedWhaleWatcher(WhaleWatcher):
             f"Tracked Wallet {label} {trade_data['direction']} ${trade_data['size_usd']:,.0f} on {protocol}"
         )
         await self.tg_bot.send_alert(message)
-        await telegram_notifier.send_alert(message)
