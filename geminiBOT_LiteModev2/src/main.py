@@ -12,7 +12,8 @@ from monitoring.system_monitor import SystemMonitor
 from monitoring.api_monitor import ApiMonitor
 from execution.paper_trader import PaperTrader
 from async_task_supervisor import run_with_retry
-from onchain.whale_watcher import WhaleWatcher
+from onchain.enhanced_whale_watcher import EnhancedWhaleWatcher
+from monitoring.whale_analytics import whale_analytics
 
 setup_logging()
 logger = get_logger(__name__)
@@ -28,16 +29,17 @@ class TradingSystem:
         await self.db_manager.disconnect()
 
         self.trade_executor = PaperTrader()
+        telegram_bot = TelegramBot()
 
         self.components = [
-            TelegramBot(),
+            telegram_bot,
             EnsembleManager(),
             SignalAggregator(),
             PortfolioMonitor(),
             SystemMonitor(),
             ApiMonitor(),
             self.trade_executor,
-            WhaleWatcher()
+            EnhancedWhaleWatcher(telegram_bot)
         ]
 
     async def run(self):
