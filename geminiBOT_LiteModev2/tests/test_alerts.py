@@ -6,13 +6,18 @@ import pytest
 # add src directory to path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-# Stub heavy modules before import
-sys.modules.setdefault("execution.telegram_wallet_manager", SimpleNamespace(WalletManager=object))
-sys.modules.setdefault("ai_analysis.whale_behavior_analyzer", SimpleNamespace())
-sys.modules.setdefault("execution.telegram_bot", SimpleNamespace(TelegramBot=object))
-sys.modules.setdefault("signal_generation.signal_aggregator", SimpleNamespace(SignalAggregator=object))
 
-from onchain.enhanced_whale_watcher import EnhancedWhaleWatcher
+@pytest.fixture
+def patch_heavy_modules(monkeypatch):
+    modules = {
+        "execution.telegram_wallet_manager": SimpleNamespace(WalletManager=object),
+        "ai_analysis.whale_behavior_analyzer": SimpleNamespace(),
+        "execution.telegram_bot": SimpleNamespace(TelegramBot=object),
+        "signal_generation.signal_aggregator": SimpleNamespace(SignalAggregator=object),
+    }
+    for name, stub in modules.items():
+        monkeypatch.setitem(sys.modules, name, stub)
+    yield
 
 class DummyDB:
     async def fetchrow(self, query, wallet):
@@ -27,7 +32,8 @@ class DummyTG:
         self.messages.append(message)
 
 @pytest.mark.asyncio
-async def test_tracked_wallet_alert(monkeypatch):
+async def test_tracked_wallet_alert(monkeypatch, patch_heavy_modules):
+    from onchain.enhanced_whale_watcher import EnhancedWhaleWatcher
     tg = DummyTG()
     monkeypatch.setattr(
         "onchain.whale_watcher.WhaleWatcher.__init__",
