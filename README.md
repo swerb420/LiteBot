@@ -61,3 +61,9 @@ To enable automatic checks, install the provided pre-commit hooks:
 pre-commit install
 ```
 
+For a simple syntax check across all modules, you can run:
+
+```bash
+python -m py_compile $(find geminiBOT_LiteModev2/src -name '*.py')
+```
+
