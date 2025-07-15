@@ -16,7 +16,8 @@ lightweight database helpers and a simplified AI module that uses CPU only.
 
 ## Running
 
-Use Docker Compose to start all services:
+Use Docker Compose to start all services. The compose file expects the
+`Dockerfile` located at the repository root:
 
 ```bash
 docker-compose up --build
