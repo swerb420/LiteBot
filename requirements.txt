@@ -10,3 +10,4 @@ transformers==4.53.2
 prometheus_client==0.22.1
 
 pytest-asyncio
+feedparser==6.0.11

@@ -63,6 +63,10 @@ Set `ENABLE_MOBILEBERT=0` in your `.env` file to disable the model entirely or c
 
 The bot is designed for low-memory environments. Make sure your VPS provides enough RAM for Docker and the database. Running within the memory limit helps keep costs low while still supporting basic whale-watching features.
 
+### News Aggregation
+
+LiteBot now includes a simple `NewsAggregator` that collects headlines from major RSS feeds. The aggregator caches the latest stories in Redis and forwards them to the Telegram bot, allowing you to monitor world events, crypto news and market updates alongside whale trades.
+
 
 ## Development
 

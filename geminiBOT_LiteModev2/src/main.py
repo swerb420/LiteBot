@@ -11,6 +11,7 @@ from risk_management.portfolio_monitor import PortfolioMonitor
 from monitoring.system_monitor import SystemMonitor
 from monitoring.api_monitor import ApiMonitor
 from monitoring.metrics_server import MetricsServer
+from data_ingestion.news_aggregator import NewsAggregator
 from execution.paper_trader import PaperTrader
 from async_task_supervisor import run_with_retry
 from onchain.enhanced_whale_watcher import EnhancedWhaleWatcher
@@ -37,6 +38,7 @@ class TradingSystem:
             telegram_bot,
             EnsembleManager(),
             SignalAggregator(),
+            NewsAggregator(),
             PortfolioMonitor(),
             SystemMonitor(),
             ApiMonitor(),
