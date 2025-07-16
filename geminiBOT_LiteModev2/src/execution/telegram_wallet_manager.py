@@ -63,6 +63,7 @@ class WalletManager:
                 CONFIRM_ADD: [CallbackQueryHandler(self.confirm_add_wallet)],
             },
             fallbacks=[CommandHandler("cancel", self.cancel)],
+            per_message=True,
         )
         self.bot.application.add_handler(add_wallet_conv)
 
@@ -77,6 +78,7 @@ class WalletManager:
                 ],
             },
             fallbacks=[CommandHandler("cancel", self.cancel)],
+            per_message=True,
         )
         self.bot.application.add_handler(edit_wallet_conv)
 
