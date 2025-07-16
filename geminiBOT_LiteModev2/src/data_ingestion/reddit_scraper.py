@@ -13,13 +13,22 @@ class RedditScraper:
 
     async def run(self):
         while True:
-            cached = await self.redis.get("reddit_feed")
+            try:
+                cached = await self.redis.get("reddit_feed")
+            except aioredis.RedisError as e:
+                logger.exception(f"[RedditScraper] Redis get error: {e}")
+                cached = None
+
             if cached:
                 logger.info("[RedditScraper] Using cached data")
             else:
                 logger.info("[RedditScraper] Fetching fresh Reddit data")
                 data = await self.fetch_data()
-                await self.redis.set("reddit_feed", data, ex=self.cache_ttl)
+                try:
+                    await self.redis.set("reddit_feed", data, ex=self.cache_ttl)
+                except aioredis.RedisError as e:
+                    logger.exception(f"[RedditScraper] Redis set error: {e}")
+
             await asyncio.sleep(60)
 
     async def fetch_data(self):
