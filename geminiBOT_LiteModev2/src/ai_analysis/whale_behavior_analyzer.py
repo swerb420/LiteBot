@@ -58,7 +58,8 @@ class WhaleBehaviorAnalyzer:
         query = """
             SELECT *, EXTRACT(EPOCH FROM timestamp) as ts
             FROM wallet_trades
-            WHERE wallet_address=$1 AND timestamp>NOW()-INTERVAL '$2 days'
+            WHERE wallet_address=$1
+              AND timestamp > NOW() - ($2 || ' days')::interval
             ORDER BY timestamp
         """
         rows = await db.fetch(query, wallet_address, days)
