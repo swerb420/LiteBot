@@ -45,3 +45,7 @@ docker-compose up --build
 
 The bot avoids heavy APIs such as Grok4 and uses only lightweight CPU models
 to keep resource usage minimal.
+
+### Market News
+
+An optional `NewsAggregator` component pulls headlines from common RSS feeds so you can keep tabs on geopolitical events and crypto regulations that may impact trading signals.
