@@ -38,7 +38,7 @@ async def test_get_wallet_trades_injection():
         assert addr_arg == '0xabc'
         assert days_arg == malicious_days
         assert 'DROP' not in called_query
-        assert 'NOW() - ($2 ||' in called_query
+        assert "($2 || ' days')::interval" in called_query
 
 @pytest.mark.asyncio
 async def test_edit_wallet_value_invalid_field():
