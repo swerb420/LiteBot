@@ -116,10 +116,16 @@ class WalletManager:
                 LIMIT 20
             """
             wallets = await db.fetch(query)
+
+            total_tracked = await db.fetchval(
+                "SELECT COUNT(*) FROM tracked_wallets WHERE tracking_enabled=true"
+            )
+
             if not wallets:
                 await update.message.reply_text("No wallets tracked. Use /add_wallet")
                 return
-            message = "Tracked Wallets\n\n"
+
+            message = f"Tracked Wallets ({total_tracked} total)\n\n"
             for w in wallets:
                 status = "🟢" if w["tracking_enabled"] else "🔴"
                 pnl_emoji = "📈" if (w["total_pnl"] or 0) > 0 else "📉"
