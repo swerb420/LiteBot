@@ -14,6 +14,8 @@ RISK_CAPITAL = float(os.getenv('RISK_CAPITAL', '10000'))
 RISK_FRACTION = float(os.getenv('RISK_FRACTION', '0.02'))
 ENABLE_MOBILEBERT = os.getenv('ENABLE_MOBILEBERT', '1') == '1'
 BERT_MODEL_NAME = os.getenv('BERT_MODEL_NAME', 'textattack/mobilebert-uncased-SST-2')
+METRICS_PORT = int(os.getenv('METRICS_PORT', '8000'))
+ENABLE_METRICS_SERVER = os.getenv('ENABLE_METRICS_SERVER', '0') == '1'
 
 
 def setup_logging():

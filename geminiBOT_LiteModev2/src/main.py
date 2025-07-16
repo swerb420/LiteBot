@@ -1,7 +1,7 @@
 # === 5️⃣ src/main.py ===
 # ➜ Location: src/main.py
 import asyncio
-from config.settings import setup_logging
+from config.settings import setup_logging, ENABLE_METRICS_SERVER, METRICS_PORT
 from utils.logger import get_logger
 from database.db_manager import DBManager
 from execution.telegram_bot import TelegramBot
@@ -10,6 +10,7 @@ from signal_generation.signal_aggregator import SignalAggregator
 from risk_management.portfolio_monitor import PortfolioMonitor
 from monitoring.system_monitor import SystemMonitor
 from monitoring.api_monitor import ApiMonitor
+from monitoring.metrics_server import MetricsServer
 from execution.paper_trader import PaperTrader
 from async_task_supervisor import run_with_retry
 from onchain.enhanced_whale_watcher import EnhancedWhaleWatcher
@@ -41,6 +42,8 @@ class TradingSystem:
             self.trade_executor,
             EnhancedWhaleWatcher(telegram_bot)
         ]
+        if ENABLE_METRICS_SERVER:
+            self.components.append(MetricsServer(METRICS_PORT))
 
     async def run(self):
         logger.info("[System] Starting Trading Bot in Lite Mode with Whale Tracker")

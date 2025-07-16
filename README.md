@@ -31,7 +31,13 @@ RISK_CAPITAL=10000
 RISK_FRACTION=0.02
 ENABLE_MOBILEBERT=1
 BERT_MODEL_NAME=textattack/mobilebert-uncased-SST-2
+METRICS_PORT=8000
+ENABLE_METRICS_SERVER=0
 ```
+
+Set `ENABLE_METRICS_SERVER=1` to start a Prometheus metrics endpoint on
+`METRICS_PORT` (default `8000`). Metrics can then be scraped from
+`http://localhost:8000/metrics`.
 
 Adjust the values to match your setup.
 
