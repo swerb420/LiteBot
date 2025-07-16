@@ -36,7 +36,7 @@ async def test_get_wallet_trades_injection():
         assert mock_fetch.await_count == 1
         called_query = mock_fetch.call_args.args[0]
         assert 'DROP' not in called_query
-        assert 'timestamp>NOW()-INTERVAL' in called_query
+        assert "($2 || ' days')::interval" in called_query
 
 @pytest.mark.asyncio
 async def test_edit_wallet_value_invalid_field():
