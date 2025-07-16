@@ -17,6 +17,14 @@ logger = get_logger(__name__)
 WALLET_ADDRESS, WALLET_LABEL, WALLET_CATEGORY, WALLET_TAGS, CONFIRM_ADD = range(5)
 EDIT_FIELD, EDIT_VALUE = range(5, 7)
 
+# Mapping of editable fields to their corresponding database columns
+FIELD_MAP = {
+    "label": "label",
+    "category": "category",
+    "tags": "tags",
+    "min_trade_size": "min_trade_size",
+}
+
 
 class WalletManager:
     def __init__(self, telegram_bot):
@@ -411,14 +419,12 @@ class WalletManager:
         if not field or not wallet:
             await update.message.reply_text("Unexpected error")
             return ConversationHandler.END
-        allowed_fields = {"label", "category", "tags", "min_trade_size"}
-        if field not in allowed_fields:
+        column = FIELD_MAP.get(field)
+        if not column:
             await update.message.reply_text("Invalid field")
             return ConversationHandler.END
         try:
-            query = (
-                "UPDATE tracked_wallets SET " + field + "=$1 WHERE wallet_address=$2"
-            )
+            query = f"UPDATE tracked_wallets SET {column}=$1 WHERE wallet_address=$2"
             await db.execute(query, value, wallet)
             await update.message.reply_text("Updated")
         except Exception as e:
