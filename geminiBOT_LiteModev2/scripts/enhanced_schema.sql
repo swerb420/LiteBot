@@ -7,6 +7,8 @@ CREATE TABLE IF NOT EXISTS tracked_wallets (
     tags TEXT[], -- Array of tags for filtering
     tracking_enabled BOOLEAN DEFAULT true,
     min_trade_size DECIMAL(20,2) DEFAULT 10000,
+    alert_direction VARCHAR(10) DEFAULT 'both',
+    alert_interval INTEGER DEFAULT 0,
     added_by VARCHAR(100),
     added_at TIMESTAMPTZ DEFAULT NOW(),
     last_activity TIMESTAMPTZ,

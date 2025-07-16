@@ -23,6 +23,8 @@ FIELD_MAP = {
     "category": "category",
     "tags": "tags",
     "min_trade_size": "min_trade_size",
+    "alert_direction": "alert_direction",
+    "alert_interval": "alert_interval",
 }
 
 
@@ -399,6 +401,10 @@ class WalletManager:
             [
                 InlineKeyboardButton("Tags", callback_data="field_tags"),
                 InlineKeyboardButton("Min Size", callback_data="field_min_trade_size"),
+            ],
+            [
+                InlineKeyboardButton("Direction", callback_data="field_alert_direction"),
+                InlineKeyboardButton("Interval", callback_data="field_alert_interval"),
             ],
         ]
         await update.message.reply_text(
