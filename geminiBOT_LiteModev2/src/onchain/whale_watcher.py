@@ -23,12 +23,21 @@ SIG_POSITION_CLOSE = Web3.keccak(text="DecreasePosition(...)").hex()
 
 class WhaleWatcher:
     def __init__(self, tg_bot: TelegramBot):
-        self.w3 = Web3(Web3.WebsocketProvider(ALCHEMY_WS_URL))
+        if not ALCHEMY_WS_URL:
+            logger.error("[WhaleWatcher] ALCHEMY_WS_URL not set - disabling watcher")
+            self.enabled = False
+            self.w3 = None
+        else:
+            self.w3 = Web3(Web3.WebsocketProvider(ALCHEMY_WS_URL))
+            self.enabled = True
         self.db = DBManager()
         self.tg_bot = tg_bot
         self.signal_aggregator = SignalAggregator()
 
     async def run(self):
+        if not getattr(self, 'enabled', True):
+            logger.warning("[WhaleWatcher] disabled - skipping run")
+            return
         if GMX_VAULT is None:
             logger.warning(
                 "[WhaleWatcher] GMX_VAULT_ADDRESS unset - disabling GMX monitoring"
