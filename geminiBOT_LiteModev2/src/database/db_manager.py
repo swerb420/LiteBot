@@ -40,6 +40,11 @@ class DBManager:
         async with self.pool.acquire() as conn:
             return await conn.fetchrow(query, *args)
 
+    async def fetchval(self, query: str, *args):
+        await self.connect()
+        async with self.pool.acquire() as conn:
+            return await conn.fetchval(query, *args)
+
     async def execute(self, query: str, *args):
         await self.connect()
         async with self.pool.acquire() as conn:

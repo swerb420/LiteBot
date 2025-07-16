@@ -96,7 +96,9 @@ async def test_list_wallets_formatting(monkeypatch):
         },
     ]
     fetch_mock = AsyncMock(return_value=sample_wallets)
+    fetchval_mock = AsyncMock(return_value=len(sample_wallets))
     monkeypatch.setattr(db_module.db, 'fetch', fetch_mock)
+    monkeypatch.setattr(db_module.db, 'fetchval', fetchval_mock)
 
     update = DummyUpdate()
     context = DummyContext()
@@ -104,7 +106,7 @@ async def test_list_wallets_formatting(monkeypatch):
     await wm.list_wallets_command(update, context)
 
     expected = (
-        "Tracked Wallets\n\n"
+        f"Tracked Wallets ({len(sample_wallets)} total)\n\n"
         "🟢 Alpha (whale)\n"
         "`0x1234...5678`\n"
         "📈 PnL: $1,000.50 | Win Rate: 60.0% | Trades: 10\n"
