@@ -23,6 +23,14 @@ whale tracker and other components to your configured chat.
 Disabling MobileBERT reduces memory usage by ~150&nbsp;MB, which can help on very
 small VPS instances.
 
+### Tracked Wallet Settings
+
+Each row in the `tracked_wallets` table supports per-wallet alert options:
+
+- `min_trade_size` - Minimum trade size required before an alert is sent
+- `alert_direction` - `long`, `short` or `both` (default)
+- `alert_interval` - Seconds to wait before sending another alert for that wallet
+
 ## Running
 
 Use Docker Compose to start all services. The compose file expects the

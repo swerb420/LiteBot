@@ -23,7 +23,8 @@ class EnhancedWhaleWatcher(WhaleWatcher):
 
     async def _load_tracked_wallets(self):
         query = """
-            SELECT wallet_address, min_trade_size, metadata
+            SELECT wallet_address, min_trade_size,
+                   alert_direction, alert_interval, metadata
             FROM tracked_wallets WHERE tracking_enabled=true
         """
         wallets = await db.fetch(query)
@@ -31,7 +32,10 @@ class EnhancedWhaleWatcher(WhaleWatcher):
             self.tracked_wallets.add(w['wallet_address'].lower())
             self.wallet_alerts[w['wallet_address'].lower()] = {
                 'min_size': w['min_trade_size'],
-                'settings': w.get('metadata', {})
+                'direction': w.get('alert_direction', 'both'),
+                'interval': w.get('alert_interval', 0),
+                'settings': w.get('metadata', {}),
+                'last_sent': 0,
             }
         logger.info(f"[EnhancedWhaleWatcher] Loaded {len(self.tracked_wallets)} wallets")
 
@@ -63,9 +67,23 @@ class EnhancedWhaleWatcher(WhaleWatcher):
             logger.error(f"[EnhancedWhaleWatcher] tracked wallet error: {e}")
 
     async def _send_tracked_wallet_alert(self, wallet: str, trade_data: Dict, protocol: str):
-        wallet_info = await db.fetchrow("SELECT label, category FROM tracked_wallets WHERE wallet_address=$1", wallet)
+        settings = self.wallet_alerts.get(wallet.lower(), {})
+        direction_pref = settings.get('direction', 'both')
+        interval = settings.get('interval', 0)
+        last_sent = settings.get('last_sent', 0)
+        if direction_pref != 'both' and trade_data['direction'] != direction_pref:
+            return
+        now = asyncio.get_event_loop().time()
+        if interval and now - last_sent < interval:
+            return
+        wallet_info = await db.fetchrow(
+            "SELECT label, category FROM tracked_wallets WHERE wallet_address=$1",
+            wallet,
+        )
         label = wallet_info['label'] if wallet_info else 'Unknown'
         message = (
             f"Tracked Wallet {label} {trade_data['direction']} ${trade_data['size_usd']:,.0f} on {protocol}"
         )
+        settings['last_sent'] = now
+        self.wallet_alerts[wallet.lower()] = settings
         await self.tg_bot.send_alert(message)

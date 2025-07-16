@@ -44,6 +44,8 @@ class DummyContext:
     ("category", "smart"),
     ("tags", "tag1,tag2"),
     ("min_trade_size", "100"),
+    ("alert_direction", "long"),
+    ("alert_interval", "60"),
 ])
 async def test_edit_wallet_value_builds_query(monkeypatch, field, value):
     bot = DummyBot()
