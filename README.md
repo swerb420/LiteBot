@@ -11,6 +11,9 @@ All Python packages needed by the bot are listed in the
 `requirements.txt` file at the repository root. The Dockerfile uses this
 file during the build stage, so keep it up to date when adding new
 dependencies.
+The bot indirectly depends on `pydantic` 2.x via the `web3` package. The
+project itself does not use FastAPI, so you can ignore any warnings about
+FastAPI requiring an older `pydantic` version.
 
 ## Environment Variables
 
@@ -38,6 +41,11 @@ docker-compose up --build
 ```
 
 Compose limits the trading bot container to about **1.5&nbsp;GB** of memory, so a VPS with at least 2&nbsp;GB of RAM is recommended.
+
+The requirements include `transformers` and `scikit-learn`, which can consume
+hundreds of megabytes of RAM when loaded. Loading the MobileBERT model for
+sentiment analysis alone adds roughly 150&nbsp;MB. Ensure your VPS has enough
+free memory or consider lighter alternatives if those features are not needed.
 
 ## VPS Notes
 

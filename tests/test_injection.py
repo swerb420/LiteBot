@@ -33,10 +33,12 @@ async def test_get_wallet_trades_injection():
     malicious_days = "30; DROP TABLE x;"
     with patch('ai_analysis.whale_behavior_analyzer.db.fetch', new=AsyncMock(return_value=[])) as mock_fetch:
         await analyzer._get_wallet_trades('0xabc', malicious_days)
-        assert mock_fetch.await_count == 1
-        called_query = mock_fetch.call_args.args[0]
+        mock_fetch.assert_awaited_once()
+        called_query, addr_arg, days_arg = mock_fetch.call_args.args
+        assert addr_arg == '0xabc'
+        assert days_arg == malicious_days
         assert 'DROP' not in called_query
-        assert 'timestamp>NOW()-INTERVAL' in called_query
+        assert 'NOW() - ($2 ||' in called_query
 
 @pytest.mark.asyncio
 async def test_edit_wallet_value_invalid_field():
