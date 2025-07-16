@@ -14,6 +14,7 @@ from monitoring.metrics_server import MetricsServer
 from execution.paper_trader import PaperTrader
 from async_task_supervisor import run_with_retry
 from onchain.enhanced_whale_watcher import EnhancedWhaleWatcher
+from onchain.hyperliquid_watcher import HyperliquidWatcher
 from monitoring.whale_analytics import whale_analytics
 
 setup_logging()
@@ -40,7 +41,8 @@ class TradingSystem:
             SystemMonitor(),
             ApiMonitor(),
             self.trade_executor,
-            EnhancedWhaleWatcher(telegram_bot)
+            EnhancedWhaleWatcher(telegram_bot),
+            HyperliquidWatcher()
         ]
         if ENABLE_METRICS_SERVER:
             self.components.append(MetricsServer(METRICS_PORT))
