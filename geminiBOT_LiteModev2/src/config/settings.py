@@ -10,6 +10,10 @@ TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', '')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID', '')
 ALCHEMY_WS_URL = os.getenv('ALCHEMY_WS_URL', '')
 GMX_VAULT_ADDRESS = os.getenv('GMX_VAULT_ADDRESS', '0x0000000000000000000000000000000000000000')
+RISK_CAPITAL = float(os.getenv('RISK_CAPITAL', '10000'))
+RISK_FRACTION = float(os.getenv('RISK_FRACTION', '0.02'))
+ENABLE_MOBILEBERT = os.getenv('ENABLE_MOBILEBERT', '1') == '1'
+BERT_MODEL_NAME = os.getenv('BERT_MODEL_NAME', 'textattack/mobilebert-uncased-SST-2')
 
 
 def setup_logging():

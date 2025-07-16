@@ -27,6 +27,10 @@ TELEGRAM_BOT_TOKEN=<telegram token>
 TELEGRAM_CHAT_ID=<telegram chat id>
 ALCHEMY_WS_URL=<alchemy websocket url>
 GMX_VAULT_ADDRESS=<gmx vault address>
+RISK_CAPITAL=10000
+RISK_FRACTION=0.02
+ENABLE_MOBILEBERT=1
+BERT_MODEL_NAME=textattack/mobilebert-uncased-SST-2
 ```
 
 Adjust the values to match your setup.
@@ -46,6 +50,8 @@ The requirements include `transformers` and `scikit-learn`, which can consume
 hundreds of megabytes of RAM when loaded. Loading the MobileBERT model for
 sentiment analysis alone adds roughly 150&nbsp;MB. Ensure your VPS has enough
 free memory or consider lighter alternatives if those features are not needed.
+Set `ENABLE_MOBILEBERT=0` in your `.env` file to disable the model entirely or change
+`BERT_MODEL_NAME` to swap in a different transformer.
 
 ## VPS Notes
 

@@ -3,6 +3,7 @@
 import asyncio
 from transformers import pipeline
 from utils.logger import get_logger
+from config.settings import ENABLE_MOBILEBERT, BERT_MODEL_NAME
 
 logger = get_logger(__name__)
 
@@ -17,15 +18,21 @@ class SentimentAnalyzer:
         self._loaded = False
 
     async def _load(self):
-        if not self._loaded:
-            logger.info("[SentimentAnalyzer] Loading MobileBERT...")
-            self.pipeline = pipeline(
-                "sentiment-analysis",
-                model="textattack/mobilebert-uncased-SST-2",
-                device=-1,
-            )
+        if self._loaded:
+            return
+        if not ENABLE_MOBILEBERT:
+            logger.warning("[SentimentAnalyzer] MobileBERT disabled via config")
+            self.pipeline = lambda text: [{"label": "NEUTRAL", "score": 0.0}]
             self._loaded = True
-            logger.info("[SentimentAnalyzer] MobileBERT model loaded.")
+            return
+        logger.info("[SentimentAnalyzer] Loading MobileBERT...")
+        self.pipeline = pipeline(
+            "sentiment-analysis",
+            model=BERT_MODEL_NAME,
+            device=-1,
+        )
+        self._loaded = True
+        logger.info("[SentimentAnalyzer] MobileBERT model loaded.")
 
     async def run(self):
         await self._load()

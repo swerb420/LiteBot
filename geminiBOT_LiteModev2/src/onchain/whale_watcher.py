@@ -4,6 +4,7 @@ import asyncio
 import os
 from web3 import Web3
 from utils.logger import get_logger
+from utils.metrics import metrics
 from database.db_manager import DBManager
 from execution.telegram_bot import TelegramBot
 from signal_generation.signal_aggregator import SignalAggregator
@@ -54,9 +55,11 @@ class WhaleWatcher:
     async def _process_log(self, log, protocol: str):
         sig = log["topics"][0].hex()
         wallet = Web3.to_checksum_address('0x' + log["topics"][1].hex()[-40:])
+        metrics.inc("logs_processed")
         if sig == SIG_POSITION_OPEN:
             data = self.decode_increase_position(log)
             await self.write_trade(wallet, protocol, "open", data)
+            metrics.inc("trades_opened")
             await self.tg_bot.send_alert(
                 f"🐋 Whale {wallet} opened {data['size_usd']:.2f}$ {data['direction']}"
             )
@@ -65,6 +68,7 @@ class WhaleWatcher:
             )
         elif sig == SIG_POSITION_CLOSE:
             await self.link_pnl(wallet, log)
+            metrics.inc("trades_closed")
 
     def decode_increase_position(self, log):
         data = log["data"]
@@ -79,6 +83,16 @@ class WhaleWatcher:
             "tx_hash": log["transactionHash"].hex()
         }
 
+    def decode_decrease_position(self, log):
+        data = log["data"]
+        size_usd = int(data[2:66], 16) / 1e30
+        pnl = int(data[130:194], 16) / 1e30
+        return {
+            "pnl": pnl,
+            "size_usd": size_usd,
+            "tx_hash": log["transactionHash"].hex()
+        }
+
     async def write_trade(self, wallet, protocol, action, data):
         try:
             await self.db.pool.execute(
@@ -89,12 +103,21 @@ class WhaleWatcher:
                 wallet, protocol, action,
                 data["symbol"], data["size_usd"], data["leverage"], data["direction"], data["tx_hash"]
             )
+            metrics.inc("trades_recorded")
             logger.info(f"[WhaleWatcher] {protocol} {action} {data}")
         except Exception as e:
             logger.error(f"[WhaleWatcher] write_trade error: {e}")
 
     async def link_pnl(self, wallet, log):
-        # Example placeholder to link open/close and calculate PnL
-        # You’ll decode DecreasePosition details properly here
-        logger.info(f"[WhaleWatcher] Linking PnL for {wallet}")
+        data = self.decode_decrease_position(log)
+        logger.info(f"[WhaleWatcher] Linking PnL for {wallet} -> {data['pnl']}")
+        row = await self.db.fetchrow(
+            "SELECT id FROM wallet_trades WHERE wallet_address=$1 AND action='open' ORDER BY timestamp DESC LIMIT 1",
+            wallet,
+        )
+        if row:
+            await self.db.execute(
+                "UPDATE wallet_trades SET pnl=$1, action='close' WHERE id=$2",
+                data["pnl"], row["id"],
+            )
 
