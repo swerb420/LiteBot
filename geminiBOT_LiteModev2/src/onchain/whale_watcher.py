@@ -95,13 +95,19 @@ class WhaleWatcher:
 
     async def write_trade(self, wallet, protocol, action, data):
         try:
-            await self.db.pool.execute(
+            await self.db.execute(
                 """
                 INSERT INTO wallet_trades(wallet_address, protocol, action, symbol, size_usd, leverage, direction, tx_hash)
                 VALUES($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT DO NOTHING
                 """,
-                wallet, protocol, action,
-                data["symbol"], data["size_usd"], data["leverage"], data["direction"], data["tx_hash"]
+                wallet,
+                protocol,
+                action,
+                data["symbol"],
+                data["size_usd"],
+                data["leverage"],
+                data["direction"],
+                data["tx_hash"],
             )
             metrics.inc("trades_recorded")
             logger.info(f"[WhaleWatcher] {protocol} {action} {data}")
