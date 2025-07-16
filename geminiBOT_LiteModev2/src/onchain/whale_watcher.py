@@ -2,7 +2,8 @@
 # === 1️⃣ WhaleWatcher with WebSocket ===
 import asyncio
 import os
-from web3 import Web3
+from web3 import AsyncWeb3, Web3
+from web3.providers.persistent.websocket import WebSocketProvider as AsyncWebsocketProvider
 from utils.logger import get_logger
 from utils.metrics import metrics
 from database.db_manager import DBManager
@@ -28,7 +29,7 @@ class WhaleWatcher:
             self.enabled = False
             self.w3 = None
         else:
-            self.w3 = Web3(Web3.WebsocketProvider(ALCHEMY_WS_URL))
+            self.w3 = AsyncWeb3(AsyncWebsocketProvider(ALCHEMY_WS_URL))
             self.enabled = True
         self.db = DBManager()
         self.tg_bot = tg_bot
@@ -44,11 +45,11 @@ class WhaleWatcher:
             )
             return
         await self.db.connect()
-        event_filter = self.w3.eth.filter({"address": GMX_VAULT})
+        event_filter = await self.w3.eth.filter({"address": GMX_VAULT})
         logger.info("[WhaleWatcher] WebSocket listening...")
         while True:
             try:
-                logs = event_filter.get_new_entries()
+                logs = await event_filter.get_new_entries()
                 for log in logs:
                     await self.handle_log(log)
             except Exception as e:
