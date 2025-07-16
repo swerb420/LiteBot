@@ -15,6 +15,13 @@ whale tracker and other components to your configured chat.
 - `TELEGRAM_CHAT_ID` - Chat ID for sending alerts
 - `ALCHEMY_WS_URL` - Ethereum WebSocket provider
 - `GMX_VAULT_ADDRESS` - GMX vault address
+- `RISK_CAPITAL` - Paper trading capital (default `10000`)
+- `RISK_FRACTION` - Fraction of capital risked per trade (default `0.02`)
+- `ENABLE_MOBILEBERT` - Set to `0` to disable the sentiment model
+- `BERT_MODEL_NAME` - Hugging Face model name for sentiment analysis
+
+Disabling MobileBERT reduces memory usage by ~150&nbsp;MB, which can help on very
+small VPS instances.
 
 ## Running
 
