@@ -7,7 +7,7 @@ import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'geminiBOT_LiteModev2', 'src'))
 
-from execution.telegram_wallet_manager import WalletManager
+from execution.telegram_wallet_manager import WalletManager, FIELD_MAP
 from database import db_manager as db_module
 
 
@@ -57,8 +57,9 @@ async def test_edit_wallet_value_builds_query(monkeypatch, field, value):
 
     await wm.edit_wallet_value(update, context)
 
+    column = FIELD_MAP[field]
     exec_mock.assert_awaited_once_with(
-        f"UPDATE tracked_wallets SET {field}=$1 WHERE wallet_address=$2",
+        f"UPDATE tracked_wallets SET {column}=$1 WHERE wallet_address=$2",
         value,
         '0xabc'
     )
