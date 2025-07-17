@@ -1,6 +1,7 @@
 import asyncio
 import feedparser
 import aioredis
+import aiohttp
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -35,12 +36,21 @@ class NewsAggregator:
 
     async def fetch_all(self) -> str:
         headlines = []
-        for url in self.FEEDS:
-            try:
-                feed = feedparser.parse(url)
-                for entry in feed.entries[: self.limit]:
-                    headlines.append(entry.title)
-            except Exception as e:  # pragma: no cover - network errors
-                logger.error("[NewsAggregator] feed error: %s", e)
-        data = "\n".join(headlines)
-        return data
+
+        async def fetch(url: str, session: aiohttp.ClientSession):
+            async with session.get(url) as resp:
+                text = await resp.text()
+                feed = feedparser.parse(text)
+                return [entry.title for entry in feed.entries[: self.limit]]
+
+        async with aiohttp.ClientSession() as session:
+            tasks = [fetch(url, session) for url in self.FEEDS]
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        for result in results:
+            if isinstance(result, Exception):  # pragma: no cover - network errors
+                logger.error("[NewsAggregator] feed error: %s", result)
+            else:
+                headlines.extend(result)
+
+        return "\n".join(headlines)

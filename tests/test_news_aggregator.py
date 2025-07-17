@@ -32,10 +32,35 @@ async def test_fetch_all_collects_titles(monkeypatch):
     entries1 = [SimpleNamespace(title='A'), SimpleNamespace(title='B')]
     entries2 = [SimpleNamespace(title='C')]
 
-    def fake_parse(url):
-        return SimpleNamespace(entries=entries1 if 'bbc' in url else entries2)
+    def fake_parse(data):
+        return SimpleNamespace(entries=entries1 if data == 'data1' else entries2)
 
+    class FakeResponse:
+        def __init__(self, url):
+            self.url = url
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, exc_type, exc, tb):
+            pass
+
+        async def text(self):
+            return 'data1' if 'bbc' in self.url else 'data2'
+
+    class FakeSession:
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, exc_type, exc, tb):
+            pass
+
+        def get(self, url):
+            return FakeResponse(url)
+
+    monkeypatch.setattr(na.aiohttp, 'ClientSession', lambda *a, **k: FakeSession())
     monkeypatch.setattr(na.feedparser, 'parse', fake_parse)
+
     aggregator = na.NewsAggregator()
     data = await aggregator.fetch_all()
     assert 'A' in data and 'C' in data
