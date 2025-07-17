@@ -38,7 +38,7 @@ class TradingSystem:
             telegram_bot,
             EnsembleManager(),
             SignalAggregator(),
-            NewsAggregator(),
+            NewsAggregator(telegram_bot),
             PortfolioMonitor(),
             SystemMonitor(),
             ApiMonitor(),
