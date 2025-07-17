@@ -64,3 +64,12 @@ async def test_fetch_all_collects_titles(monkeypatch):
     aggregator = na.NewsAggregator()
     data = await aggregator.fetch_all()
     assert 'A' in data and 'C' in data
+
+
+@pytest.mark.asyncio
+async def test_alert_cached_news_sends(monkeypatch):
+    send_mock = AsyncMock()
+    aggregator = na.NewsAggregator(tg_bot=SimpleNamespace(send_alert=send_mock))
+    aggregator.redis = SimpleNamespace(get=AsyncMock(return_value='abc'))
+    await aggregator.alert_cached_news()
+    send_mock.assert_awaited_once_with('abc')
