@@ -3,7 +3,6 @@
 import asyncio
 from config.settings import setup_logging, ENABLE_METRICS_SERVER, METRICS_PORT
 from utils.logger import get_logger
-from database.db_manager import DBManager
 from execution.telegram_bot import TelegramBot
 from ai_analysis.ensemble_manager import EnsembleManager
 from signal_generation.signal_aggregator import SignalAggregator
@@ -16,7 +15,6 @@ from execution.paper_trader import PaperTrader
 from async_task_supervisor import run_with_retry
 from onchain.enhanced_whale_watcher import EnhancedWhaleWatcher
 from onchain.hyperliquid_watcher import HyperliquidWatcher
-from monitoring.whale_analytics import whale_analytics
 
 setup_logging()
 logger = get_logger(__name__)
@@ -24,13 +22,8 @@ logger = get_logger(__name__)
 class TradingSystem:
     def __init__(self):
         self.components = []
-        self.db_manager = DBManager()
 
     async def initialize_components(self):
-        await self.db_manager.connect()
-        symbols = await self.db_manager.get_tracked_assets()
-        await self.db_manager.disconnect()
-
         self.trade_executor = PaperTrader()
         telegram_bot = TelegramBot()
 
