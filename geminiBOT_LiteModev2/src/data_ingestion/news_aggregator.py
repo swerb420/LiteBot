@@ -1,6 +1,7 @@
 import asyncio
 import feedparser
 import aioredis
+import aiohttp
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
