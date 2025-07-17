@@ -15,8 +15,9 @@ class NewsAggregator:
         "https://www.reuters.com/rssFeed/marketsNews",
     ]
 
-    def __init__(self, redis_url: str = "redis://localhost", limit: int = 5) -> None:
-        self.redis = redis.from_url(redis_url)
+    def __init__(self, tg_bot=None, redis_url: str = "redis://localhost", limit: int = 5) -> None:
+        self.tg_bot = tg_bot
+        self.redis = aioredis.from_url(redis_url)
         self.cache_ttl = 600
         self.limit = limit
 
@@ -44,3 +45,15 @@ class NewsAggregator:
                 logger.error("[NewsAggregator] feed error: %s", e)
         data = "\n".join(headlines)
         return data
+
+    async def alert_cached_news(self) -> None:
+        if not self.tg_bot:
+            return
+        try:
+            headlines = await self.redis.get("latest_news")
+            if headlines:
+                if isinstance(headlines, bytes):
+                    headlines = headlines.decode()
+                await self.tg_bot.send_alert(str(headlines))
+        except Exception as e:  # pragma: no cover - redis errors
+            logger.error("[NewsAggregator] alert error: %s", e)
