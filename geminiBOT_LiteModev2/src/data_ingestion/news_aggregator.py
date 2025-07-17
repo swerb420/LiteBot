@@ -1,6 +1,6 @@
 import asyncio
 import feedparser
-import aioredis
+import redis.asyncio as redis
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -16,7 +16,7 @@ class NewsAggregator:
     ]
 
     def __init__(self, redis_url: str = "redis://localhost", limit: int = 5) -> None:
-        self.redis = aioredis.from_url(redis_url)
+        self.redis = redis.from_url(redis_url)
         self.cache_ttl = 600
         self.limit = limit
 

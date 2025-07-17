@@ -1,6 +1,6 @@
 web3==7.12.1
 hyperliquid==0.4.66
-aioredis==2.0.1
+redis==6.2.0
 asyncpg==0.30.0
 ccxt==4.4.94
 python-telegram-bot==22.2

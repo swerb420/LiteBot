@@ -6,10 +6,6 @@ import types
 
 import pytest
 
-sys.modules['aioredis'] = types.SimpleNamespace(
-    RedisError=Exception,
-    from_url=lambda *a, **k: SimpleNamespace()
-)
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'geminiBOT_LiteModev2', 'src'))
 
@@ -18,7 +14,7 @@ from data_ingestion import reddit_scraper as rs
 @pytest.mark.asyncio
 async def test_run_logs_and_continues_on_redis_error(monkeypatch):
     scraper = rs.RedditScraper()
-    get_mock = AsyncMock(side_effect=rs.aioredis.RedisError('fail'))
+    get_mock = AsyncMock(side_effect=rs.redis.RedisError('fail'))
     set_mock = AsyncMock()
     scraper.redis = SimpleNamespace(get=get_mock, set=set_mock)
 

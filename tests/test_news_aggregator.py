@@ -6,11 +6,6 @@ import types
 
 import pytest
 
-# Mock aioredis
-sys.modules['aioredis'] = types.SimpleNamespace(
-    RedisError=Exception,
-    from_url=lambda *a, **k: SimpleNamespace()
-)
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'geminiBOT_LiteModev2', 'src'))
 
