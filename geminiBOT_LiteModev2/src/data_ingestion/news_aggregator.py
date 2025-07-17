@@ -1,6 +1,6 @@
 import asyncio
 import feedparser
-import aioredis
+import redis.asyncio as redis
 from utils.logger import get_logger
 
 logger = get_logger(__name__)

@@ -1,21 +1,21 @@
 # src/data_ingestion/reddit_scraper.py
 
 import asyncio
-import aioredis
+import redis.asyncio as redis
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
 
 class RedditScraper:
     def __init__(self, redis_url="redis://localhost"):
-        self.redis = aioredis.from_url(redis_url)
+        self.redis = redis.from_url(redis_url)
         self.cache_ttl = 600  # 10 minutes
 
     async def run(self):
         while True:
             try:
                 cached = await self.redis.get("reddit_feed")
-            except aioredis.RedisError as e:
+            except redis.RedisError as e:
                 logger.exception(f"[RedditScraper] Redis get error: {e}")
                 cached = None
 
@@ -26,7 +26,7 @@ class RedditScraper:
                 data = await self.fetch_data()
                 try:
                     await self.redis.set("reddit_feed", data, ex=self.cache_ttl)
-                except aioredis.RedisError as e:
+                except redis.RedisError as e:
                     logger.exception(f"[RedditScraper] Redis set error: {e}")
 
             await asyncio.sleep(60)
